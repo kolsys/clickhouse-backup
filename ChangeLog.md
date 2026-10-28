@@ -1,4 +1,7 @@
 # v2.8.3
+NEW FEATURES
+- support tables with local and `plain_rewritable` disks in one storage policy: ClickHouse rejects FREEZE for them, so `create` hardlinks the local parts into `shadow` the way FREEZE does and copies the parts of the plain disks from the bucket, with merges and moves of the table stopped (needs `SYSTEM MERGES` and `SYSTEM MOVES` grants, moves are now stopped for every table on a storage policy with plain disks), plain disks in `skip_disks` are skipped, `clickhouse.disk_mapping` is applied to the part paths, `sync_replicated_tables`, `freeze_by_part_where` and `ignore_not_exists_error_during_freeze` apply to such tables as they apply to FREEZE, parts on object disks with local metadata (including `cache` and `encrypted` wrappers over them) next to plain disks are rejected
+
 BUG FIXES
 - `rebase` with `remote_storage: azblob` no longer fails with `BlobNotFound` for databases and tables whose names need encoding, such as `test-db` or the `.inner_id.` table of a materialized view, the server-side copy source URL is escaped now, fix [#1637](https://github.com/Altinity/clickhouse-backup/issues/1637)
 
